@@ -1,33 +1,40 @@
 # shell
 
-Shell + ShellCollection + PrivateBreeding + OutgrowMetaSkill — hermit crab finding/outgrowing shells
+Unified hermit crab shell + tool loader for the Cocapn Fleet Intelligence System.
+
+An agent tries on a shell (role), grows inside it, loads tools, and leaves when outgrown.
 
 ## Dependencies
 
-none (standalone)
+none (standalone Python 3.10+)
 
 ## Usage
 
 ```python
-from core.shell import ...
+from shell import Shell, ShellCollection, PlatoShell
+
+# Hermit crab metaphor — agent tries on a shell
+shell = Shell("forge-shell", {"capacity": 100, "purpose": "code_gen"})
+result = shell.try_on("agent-42")
+print(result["fit_score"])  # 0.0-1.0
+
+# Tool loader — agent loads a tool into the shell
+tool = shell.load_tool("coordination-topology")  # calls try_on() internally
+shell.grow_inside({"content": "learned topology", "type": "knowledge", "confidence": 0.85})
+
+# When outgrown, auto-unload
+if shell.is_outgrown():
+    shell.unload_tool("coordination-topology")
+    departure = shell.leave()
+
+# Discover available shells
+shells = PlatoShell.discover_shells()
 ```
 
-## Shell Loading
+## Merged from
 
-This tool can be loaded into any PLATO shell environment:
-
-```python
-# Neo loads this tool from the weapon rack
-from plato_shell_bridge import PlatoShell
-shell = PlatoShell("agent-shell")
-shell.load_tool("shell")
-```
-
-## Tests
-
-```bash
-python3 -m pytest tests/test_shell.py -v
-```
+- `SuperInstance/shell` — Forgemaster's hermit crab shell (try_on, fits, grow_inside, is_outgrown, leave)
+- `SuperInstance/plato-shell-bridge` — PlatoShell tool loader (load_tool, unload_tool, list_tools, discover_shells)
 
 ## License
 
